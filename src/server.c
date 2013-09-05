@@ -1,23 +1,22 @@
-/******************************************************************************
-* echo_server.c                                                               *
-*                                                                             *
-* Description: This file contains the C source code for an echo server.  The  *
-*              server runs on a hard-coded port and simply write back anything*
-*              sent to it by connected clients.  It does not support          *
-*              concurrent clients.                                            *
-*                                                                             *
-* Authors: Athula Balachandran <abalacha@cs.cmu.edu>,                         *
-*          Wolf Richter <wolf@cs.cmu.edu>                                     *
-*                                                                             *
-*******************************************************************************/
+/*
+ *
+@brief
 
-#include <netinet/in.h>
-#include <netinet/ip.h>
+@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
+
+@bugs No known bugs
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <unistd.h>
+
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/ip.h>
 
 #define ECHO_PORT 9999
 #define BUF_SIZE 4096

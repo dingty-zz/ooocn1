@@ -16,6 +16,10 @@ src/obj/
 *.exe
 *.out
 *.app
+lisod
 
 # Test files
-test/
+replay.test
+replay.out
+
+readme.txt
