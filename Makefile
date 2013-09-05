@@ -18,10 +18,10 @@ LIBS=
 CFLAGS=-I$(IDIR) -Wall -Werror
 
 
-_HEADERS =
+_HEADERS = netservice.h
 HEADERS = $(patsubst %,$(IDIR)/%,$(_HEADERS))
 
-_OBJ = server.o
+_OBJ = server.o netservice.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
