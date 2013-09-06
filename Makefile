@@ -18,10 +18,10 @@ LIBS=
 CFLAGS=-I$(IDIR) -Wall -Werror
 
 
-_HEADERS = netservice.h
+_HEADERS = netservice.h selectpool.h
 HEADERS = $(patsubst %,$(IDIR)/%,$(_HEADERS))
 
-_OBJ = server.o netservice.o
+_OBJ = main.o netservice.o selectpool.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
@@ -35,5 +35,7 @@ $(ODIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
 .PHONY: clean
 
 clean:
-	@rm -f lisod $(ODIR)/* $(SRCDIR)/*~ $(IDIR)/*~
+	@rm -f lisod \
+		$(ODIR)/* $(SRCDIR)/*~ $(IDIR)/*~ $(SRCDIR)/*.orig $(IDIR)/*.orig \
+		lockfile logfile
 

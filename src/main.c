@@ -12,8 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <syslog.h>
-
 
 #include <netservice.h>
 
@@ -24,14 +22,13 @@ int main(int argc, char* argv[])
 
     port = atoi(argv[1]);
 
-    open_listening_port(port);
-
-    while (1) {
-        printf("accepting clients\n");
-        // TODO: select
-        // TODO: check if listenfd is set
-        // TODO: check clients
+    if( open_listening_port(port) < 0 ) {
+      exit(0);
     }
 
-    return EXIT_SUCCESS;
+    while (1) {
+        net_handle();
+    }
+
+    exit(0);
 }

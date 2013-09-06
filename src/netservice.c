@@ -1,20 +1,22 @@
-#include <netservice.h>
-
-#include <sys/select.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 
+#include <netservice.h>
+#include <selectpool.h>
+
 #define LISTENQ 10
+
+SelectPool pool;
 
 /*
 @brief
-  open and return a listening socket on port
+  open and return a listening socket on port;
 @param
-  port: the port to listen
+  port: the port to listen;
 @return
-  if success, return socket file descriptor (non-negative) of listing port
-  if on Unix error, return -1 and sets errno
+  if success, return 0;
+  if on Unix error, return -1;
 */
 int open_listening_port(int port) {
     int listenfd;
@@ -37,5 +39,14 @@ int open_listening_port(int port) {
     if (listen(listenfd, LISTENQ) < 0)
         return -1;
 
-    return listenfd;
+    /* initialize the selectpool */
+    init_pool(&pool, listenfd);
+
+    return 0;
+}
+
+
+void net_handle() {
+    refresh_select(&pool);
+    echo_back(&pool);
 }
