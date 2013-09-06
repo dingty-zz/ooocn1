@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <assert.h>
 #include <sys/select.h>
 #include <sys/socket.h>
@@ -50,24 +51,41 @@ static void add_heap(int *heap, int *size, int item) {
         else
             break;
     }
-
-    printf("heap size: %d\n", *size);
-    for (i = 0; i < *size; i++) {
-        printf("%d ", heap[i]);
-    }
-    printf("\n\n");
 }
 
+static int setnonblocking(int sockfd) {
+    int opts;
+    opts = fcntl(sockfd, F_GETFL);
+
+    if (opts < 0)
+        return -1;
+
+    opts = (opts | O_NONBLOCK);
+
+    if (fcntl(sockfd,F_SETFL,opts) < 0)
+        return -1;
+
+    return 0;
+}
 static void add_client(SelectPool *pool, int connfd) {
     // we can't handle additional clients
-    if( pool->client_num == FD_SETSIZE )
+    if( pool->client_num == FD_SETSIZE ) {
         return;
+    }
+    if( setnonblocking(connfd) < 0) {
+        return;
+    }
 
     pool->nready --;
     FD_SET(connfd, &pool->read_set);
 
     // add that descriptor to heap
     add_heap(pool->clientfd, & pool->client_num, connfd);
+}
+
+
+static void remove_client(SelectPool *pool, int fd) {
+  FD_CLR(fd, &pool->read_set);
 }
 
 /*
@@ -80,14 +98,18 @@ static void add_client(SelectPool *pool, int connfd) {
 */
 void refresh_select(SelectPool *pool) {
     int connfd;
+    struct timeval timeout;
     struct sockaddr_in addr;
     socklen_t addr_len = sizeof(struct sockaddr_in);
+
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
 
     /*Wait for listening/connected descriptor(s) to become ready*/
     pool->ready_set = pool->read_set;
 
     if( (pool->nready =
-                select(maxfd_inpool(pool)+1, &(pool->ready_set), NULL, NULL, NULL) )
+                select(maxfd_inpool(pool)+1, &(pool->ready_set), NULL, NULL, &timeout) )
             < 0
       ) {
         exit(0);
@@ -118,12 +140,18 @@ void echo_back(SelectPool *pool) {
     int n;
     char buf[BUFSIZE];
 
-    for (i = 0; i < pool->client_num && pool->nready > 0; i++) {
+    for (i = pool->client_num - 1; i >= 0 && pool->nready > 0; i--) {
         fd = pool->clientfd[i];
         if(FD_ISSET(fd, &pool->ready_set)) {
             pool->nready --;
+            printf("readwrite\n");
             n = read(fd, buf, BUFSIZE);
-            write(fd, buf, n);
+            if(n == 0) {
+                remove_client(pool, fd);
+            }
+            else {
+                write(fd, buf, n);
+            }
         }
     }
 }
