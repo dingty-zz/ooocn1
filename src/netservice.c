@@ -4,6 +4,8 @@
 
 #include <netservice.h>
 #include <selectpool.h>
+#include <logger.h>
+#include <clientsocket.h>
 
 #define LISTENQ 10
 
@@ -11,14 +13,17 @@ SelectPool pool;
 
 /*
 @brief
-  open and return a listening socket on port;
+  Start running the server:
+  - open the listening port
+  - initialize environment
+
 @param
   port: the port to listen;
 @return
   if success, return 0;
   if on Unix error, return -1;
 */
-int open_listening_port(int port) {
+int start_server(int port) {
     int listenfd;
     struct sockaddr_in serveraddr;
 
@@ -45,8 +50,32 @@ int open_listening_port(int port) {
     return 0;
 }
 
+static void net_service(SelectPool *pool) {
+    ClientSocket *clisock;
+    ll_Node *iter;
+
+    if(pool->nready == 0)
+        return;
+
+    FOR_EACH_CLIENT(pool, iter, clisock) {
+
+        if (FD_ISSET(clisock->fd, & pool->read_set)) {
+            handleread(clisock);
+        }
+        if ( ! isClosed(clisock)
+          && FD_ISSET(clisock->fd, & pool->write_set)) {
+            handlewrite(clisock);
+        }
+    }
+
+    removeClosedSocket(pool);
+}
 
 void net_handle() {
+    logger(LOG_DEBUG, "refresh_select");
     refresh_select(&pool);
-    echo_back(&pool);
+    logger(LOG_DEBUG, "net service");
+    net_service(&pool);
+    logger(LOG_DEBUG, "accept newclient");
+    accept_newclient(&pool);
 }

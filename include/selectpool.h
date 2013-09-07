@@ -2,22 +2,32 @@
 #define _SELECTPOOL_H
 
 #include <sys/select.h>
+#include <linkedlist.h>
+#include <clientsocket.h>
 
 typedef struct _SelectPool { /*represents a pool of connected descriptors*/
 
     int listenfd;
 
-    fd_set read_set; /*set of all active descriptors*/
-    fd_set ready_set; /*subset of descriptors ready for reading*/
-    int nready; /*number of ready descriptors from select*/
+    fd_set read_set;
+    fd_set write_set;
+    int nready;
 
-    int client_num; /*number of clients*/
-    int clientfd[FD_SETSIZE]; /*set of active descriptors*/
+    Linlist *clients;
 
 } SelectPool;
 
 void init_pool(SelectPool *, int);
 void refresh_select(SelectPool *);
-void echo_back(SelectPool *);
+void accept_newclient(SelectPool *);
+
+#define FOR_EACH_CLIENT(pool, iter, client) \
+    iter = ll_start( pool->clients ); \
+    for ( client = (ClientSocket *) iter->item; \
+          iter != ll_end(pool->clients) ; \
+          iter = ll_next(iter), client = (ClientSocket *) iter->item \
+        )
+
+void removeClosedSocket(SelectPool *pool);
 
 #endif // for #ifndef _SELECTPOOL_H

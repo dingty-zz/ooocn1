@@ -18,10 +18,11 @@ LIBS=
 CFLAGS=-I$(IDIR) -Wall -Werror
 
 
-_HEADERS = netservice.h selectpool.h
+_HEADERS = netservice.h selectpool.h logger.h clientsocket.h linkedlist.h
 HEADERS = $(patsubst %,$(IDIR)/%,$(_HEADERS))
 
-_OBJ = main.o netservice.o selectpool.o
+_OBJ = main.o netservice.o selectpool.o logger.o clientsocket.o linkedlist.o\
+	   pool_internal.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 

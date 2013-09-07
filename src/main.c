@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <logger.h>
 
 #include <netservice.h>
 
@@ -22,9 +23,11 @@ int main(int argc, char* argv[])
 
     port = atoi(argv[1]);
 
-    if( open_listening_port(port) < 0 ) {
-      exit(0);
+    if( start_server(port) < 0 ) {
+        exit(0);
     }
+
+    logger(LOG_INFO, "Start listening on port (%d)", port);
 
     while (1) {
         net_handle();
