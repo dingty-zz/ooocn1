@@ -3,7 +3,7 @@
 
 #include <linkedlist.h>
 
-#define CLISOCK_BUFSIZE 4096
+#define CLISOCK_BUFSIZE 8192
 //#define CLISOCK_BUFSIZE 4
 
 typedef struct _ClientSocket {

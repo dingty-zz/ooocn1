@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <errno.h>
@@ -45,15 +46,16 @@ void handleread(ClientSocket *clisock) {
               , 0
             );
 
-    if(n == -1) {
+    if(n < 0) {
         if (errno == EINTR) {
             logger(LOG_WARN, "recv() EINTR. Try again later.");
             return;
         }
+        logger(LOG_WARN, "recv() Error: %s", strerror(errno));
         clisock->closed = 1;
     }
     else if(n == 0) {
-        logger(LOG_INFO, "Client closed (fd: %d)", clisock->fd);
+        logger(LOG_DEBUG, "Client connection closed (fd: %d)", clisock->fd);
         clisock->closed = 1;
     }
     else {
@@ -66,16 +68,17 @@ void handleread(ClientSocket *clisock) {
 void handlewrite(ClientSocket *clisock) {
     int n;
     n = send(clisock->fd
-             , clisock->buf
+             , & clisock->buf[0]
              , clisock->curRead
              , 0
             );
 
-    if(n == -1) {
+    if(n < 0) {
         if (errno == EINTR) {
             logger(LOG_WARN, "send() EINTR. Try again later.");
             return;
         }
+        logger(LOG_WARN, "send() Error: %s", strerror(errno));
         clisock->closed = 1;
     }
     else if(n != clisock->curRead) {

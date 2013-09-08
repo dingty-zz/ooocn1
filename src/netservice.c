@@ -57,13 +57,17 @@ static void net_service(SelectPool *pool) {
     if(pool->nready == 0)
         return;
 
+    logger(LOG_DEBUG, "net service");
+
     FOR_EACH_CLIENT(pool, iter, clisock) {
 
         if (FD_ISSET(clisock->fd, & pool->read_set)) {
+            logger(LOG_DEBUG, "Client %d reading", clisock->fd);
             handleread(clisock);
         }
         if ( ! isClosed(clisock)
           && FD_ISSET(clisock->fd, & pool->write_set)) {
+            logger(LOG_DEBUG, "Client %d writing", clisock->fd);
             handlewrite(clisock);
         }
     }
@@ -72,10 +76,10 @@ static void net_service(SelectPool *pool) {
 }
 
 void net_handle() {
-    logger(LOG_DEBUG, "refresh_select");
+    logger(LOG_DEBUG, "refresh select pool");
     refresh_select(&pool);
-    logger(LOG_DEBUG, "net service");
+
     net_service(&pool);
-    logger(LOG_DEBUG, "accept newclient");
+
     accept_newclient(&pool);
 }

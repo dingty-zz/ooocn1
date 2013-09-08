@@ -9,6 +9,7 @@
 
 //#define LOGLEVEL LOG_DEBUG
 #define LOGLEVEL LOG_INFO
+//#define LOGLEVEL LOG_WARN
 
 #define logger(level, ...) \
 { \

@@ -7,23 +7,7 @@
 #include <logger.h>
 
 
-int maxfd_inpool(SelectPool *pool) {
-    ClientSocket * clisock;
-    ll_Node *iter;
-    int maxfd = pool->listenfd;
-    int fd;
-
-    FOR_EACH_CLIENT(pool, iter, clisock) {
-        fd = clisock->fd;
-
-        if((FD_ISSET(fd, &pool->read_set) || FD_ISSET(fd, &pool->write_set))
-                && fd > maxfd )
-            maxfd = fd;
-    }
-    return maxfd;
-}
-
-void set_readwrite(SelectPool *pool) {
+void prepare_select(SelectPool *pool) {
     ClientSocket * clisock;
     ll_Node *iter;
 
@@ -32,16 +16,22 @@ void set_readwrite(SelectPool *pool) {
     FD_ZERO(&pool->write_set);
     FD_SET(pool->listenfd, &pool->read_set);
 
+    pool->maxfd = pool->listenfd;
+
     FOR_EACH_CLIENT(pool, iter, clisock) {
         assert(! isClosed(clisock));
 
         if ( ! isBufferFull(clisock)) {
             FD_SET(clisock->fd, & pool->read_set);
+            if(clisock->fd > pool->maxfd)
+                pool->maxfd = clisock->fd;
             logger(LOG_DEBUG, "add client (fd:%d) to read set", clisock->fd);
         }
 
         if ( ! isBufferEmpty(clisock) ) {
             FD_SET(clisock->fd, & pool->write_set);
+            if(clisock->fd > pool->maxfd)
+                pool->maxfd = clisock->fd;
             logger(LOG_DEBUG, "add client (fd:%d) to write set", clisock->fd);
         }
     }
@@ -72,7 +62,7 @@ int add_client(SelectPool *pool, int connfd) {
 
 }
 
-int setnonblocking(int sockfd) {
+int set_nonblocking(int sockfd) {
     int opts;
     opts = fcntl(sockfd, F_GETFL);
 

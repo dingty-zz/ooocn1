@@ -43,16 +43,19 @@ void init_pool(SelectPool *pool, int listenfd) {
 void refresh_select(SelectPool *pool) {
 
     // get the read_set and write_set ready for select
-    set_readwrite(pool);
+    prepare_select(pool);
 
-    pool->nready = select(maxfd_inpool(pool)+1, &pool->read_set, &pool->write_set, NULL, NULL);
+    pool->nready = select(pool->maxfd + 1,
+                          &pool->read_set,
+                          &pool->write_set,
+                          NULL, NULL);
 
     if(pool->nready < 0) {
-        logger(LOG_ERROR, "select func");
+        logger(LOG_ERROR, "select func is wrong");
         exit(0);
     }
     else if(pool->nready == 0) {
-        logger(LOG_INFO, "select returns nothing");
+        logger(LOG_WARN, "select returns nothing");
         return;
     }
 }
@@ -98,7 +101,7 @@ void removeClosedSocket(SelectPool *pool) {
                 fd = clisock->fd;
                 DeleteClientSocket(clisock);
                 close(fd);
-                logger(LOG_INFO, "Closed client (fd: %d)", fd);
+                logger(LOG_INFO, "Remove client (fd: %d)", fd);
             }
         }
         cur = next;
