@@ -1,0 +1,3 @@
+I've put down my test scripts inside 'test/' directory.
+
+Please refer to each for more testing documentation.
