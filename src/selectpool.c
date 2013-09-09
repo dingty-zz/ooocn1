@@ -60,6 +60,12 @@ void refresh_select(SelectPool *pool) {
     }
 }
 
+/*
+@brief
+  Accept new client connection.
+@param
+  pool: the select pool
+*/
 void accept_newclient(SelectPool *pool) {
     int connfd;
     struct sockaddr_in addr;
@@ -84,6 +90,13 @@ void accept_newclient(SelectPool *pool) {
     }
 }
 
+/*
+@brief
+  This functions enumerates the pool and remote sockets that have already
+  been closed.
+@param
+  pool: the select pool
+*/
 void removeClosedSocket(SelectPool *pool) {
     ll_Node *cur, *next;
     ClientSocket *clisock;

@@ -1,6 +1,9 @@
 /*
  *
 @brief
+  This is the main function file of the web server program.
+  It first start the server given the listening port.
+  Then it loops to service different kinds of net connections.
 
 @author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
 

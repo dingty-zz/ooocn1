@@ -8,6 +8,7 @@
 #include <clientsocket.h>
 #include <logger.h>
 
+
 ClientSocket *new_ClientSocket(int fd) {
     ClientSocket *clisock = malloc(sizeof(ClientSocket) );
 
@@ -37,7 +38,11 @@ void closeSocket(ClientSocket *clisock) {
     clisock->closed = 1;
 }
 
-
+/*
+@brief
+  This functions provides the interface for how to handle read bytes on
+  specific client socket.
+ */
 void handleread(ClientSocket *clisock) {
     int n;
     n = recv( clisock->fd
@@ -65,6 +70,11 @@ void handleread(ClientSocket *clisock) {
 
 }
 
+/*
+@brief
+  This functions provides the interface for how to handle send bytes on
+  specific client socket.
+ */
 void handlewrite(ClientSocket *clisock) {
     int n;
     n = send(clisock->fd

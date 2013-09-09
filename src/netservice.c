@@ -50,6 +50,10 @@ int start_server(int port) {
     return 0;
 }
 
+/*
+@brief
+  This function service reading and writing of client sockets.
+ */
 static void net_service(SelectPool *pool) {
     ClientSocket *clisock;
     ll_Node *iter;

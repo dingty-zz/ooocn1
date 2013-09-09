@@ -6,7 +6,12 @@
 #include <clientsocket.h>
 #include <logger.h>
 
-
+/*
+@brief
+  This function prepares the select sets for calling select function right next.
+  I'm have some logistics in judging whether a thing should be put into read
+  or write set. Please refer to 'readme.txt';
+ */
 void prepare_select(SelectPool *pool) {
     ClientSocket * clisock;
     ll_Node *iter;
@@ -37,6 +42,12 @@ void prepare_select(SelectPool *pool) {
     }
 }
 
+/*
+@brief
+  This function adds a client into the select pool.
+@param
+  connfd: The client's fd
+ */
 int add_client(SelectPool *pool, int connfd) {
     ll_Node *clinode;
     ClientSocket * clisock;
