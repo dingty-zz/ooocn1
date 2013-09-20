@@ -14,6 +14,11 @@
  */
 void http_process(ClientSocket *clisock) {
 
+    if(clisock->response.state == -1){
+        closeSocket(clisock);
+        return;
+    }
+
     process_request( & clisock->request, & clisock->response,
                      clisock->readbuf, & clisock->readIndex);
 

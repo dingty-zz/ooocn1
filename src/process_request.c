@@ -94,6 +94,7 @@ void process_request( HttpRequest *request, HttpResponse *response,
             switch (request->httpmethod) {
             case GET:
             case HEAD:
+                response->httpcode = 200;
                 request->state = REQ_DONE;
                 break;
             case POST:
