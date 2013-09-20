@@ -6,6 +6,7 @@
 #include <selectpool.h>
 #include <logger.h>
 #include <clientsocket.h>
+#include <http.h>
 
 #define LISTENQ 10
 
@@ -58,19 +59,19 @@ static void net_service(SelectPool *pool) {
     ClientSocket *clisock;
     ll_Node *iter;
 
-    if(pool->nready == 0)
-        return;
-
-    logger(LOG_DEBUG, "net service");
-
     FOR_EACH_CLIENT(pool, iter, clisock) {
 
         if (FD_ISSET(clisock->fd, & pool->read_set)) {
             logger(LOG_DEBUG, "Client %d reading", clisock->fd);
             handleread(clisock);
         }
+
+        if ( ! isClosed(clisock) ){
+            http_process(clisock);
+        }
+
         if ( ! isClosed(clisock)
-          && FD_ISSET(clisock->fd, & pool->write_set)) {
+                && FD_ISSET(clisock->fd, & pool->write_set)) {
             logger(LOG_DEBUG, "Client %d writing", clisock->fd);
             handlewrite(clisock);
         }
@@ -80,8 +81,10 @@ static void net_service(SelectPool *pool) {
 }
 
 void net_handle() {
-    logger(LOG_DEBUG, "refresh select pool");
     refresh_select(&pool);
+
+    if(pool.nready <= 0)
+        return;
 
     net_service(&pool);
 

@@ -26,14 +26,14 @@ void prepare_select(SelectPool *pool) {
     FOR_EACH_CLIENT(pool, iter, clisock) {
         assert(! isClosed(clisock));
 
-        if ( ! isBufferFull(clisock)) {
+        if ( ableToRead(clisock) ) {
             FD_SET(clisock->fd, & pool->read_set);
             if(clisock->fd > pool->maxfd)
                 pool->maxfd = clisock->fd;
             logger(LOG_DEBUG, "add client (fd:%d) to read set", clisock->fd);
         }
 
-        if ( ! isBufferEmpty(clisock) ) {
+        if ( ableToWrite(clisock) ) {
             FD_SET(clisock->fd, & pool->write_set);
             if(clisock->fd > pool->maxfd)
                 pool->maxfd = clisock->fd;
@@ -47,6 +47,9 @@ void prepare_select(SelectPool *pool) {
   This function adds a client into the select pool.
 @param
   connfd: The client's fd
+@return
+  0 on success;
+  negative number on failure;
  */
 int add_client(SelectPool *pool, int connfd) {
     ll_Node *clinode;

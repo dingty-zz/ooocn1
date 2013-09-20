@@ -16,23 +16,32 @@ ClientSocket *new_ClientSocket(int fd) {
         return NULL;
 
     clisock->fd = fd;
-    clisock->curRead = 0;
+    clisock->readIndex = 0;
     clisock->closed = 0;
+
+    if ( init_request(& clisock->request) < 0 ) {
+        free(clisock);
+        return NULL;
+    }
+
+    init_response( & clisock->response);
 
     return clisock;
 }
 void DeleteClientSocket(ClientSocket * clisock) {
+    delete_request(& clisock->request);
     free(clisock);
 }
 
 int isClosed(ClientSocket *clisock) {
     return clisock->closed;
 }
-int isBufferFull(ClientSocket *clisock) {
-    return clisock->curRead == CLISOCK_BUFSIZE;
+int ableToRead(ClientSocket *clisock) {
+    return ( clisock->request.state != REQ_DONE
+             && clisock->readIndex < CLISOCK_BUFSIZE );
 }
-int isBufferEmpty(ClientSocket *clisock) {
-    return clisock->curRead == 0;
+int ableToWrite(ClientSocket *clisock) {
+    return clisock->writeIndex > 0;
 }
 void closeSocket(ClientSocket *clisock) {
     clisock->closed = 1;
@@ -45,18 +54,35 @@ void closeSocket(ClientSocket *clisock) {
  */
 void handleread(ClientSocket *clisock) {
     int n;
-    n = recv( clisock->fd
-              , & clisock->buf[clisock->curRead]
-              , CLISOCK_BUFSIZE - clisock->curRead
-              , 0
-            );
+
+    if(clisock->readIndex == CLISOCK_BUFSIZE)
+        return;
+
+    switch (clisock->request.state) {
+    case REQ_CONTENT:
+        n = recv(clisock->fd,
+                 & clisock->readbuf[clisock->readIndex],
+                 CLISOCK_BUFSIZE - clisock->readIndex,
+                 0 );
+        break;
+    case REQ_LINE:
+    case REQ_HEADER:
+        // get one byte at a time for easier parsing
+        n = recv(clisock->fd,
+                 & clisock->readbuf[clisock->readIndex],
+                 1,
+                 0 );
+        break;
+    default:
+        return;
+    }
 
     if(n < 0) {
         if (errno == EINTR) {
             logger(LOG_WARN, "recv() EINTR. Try again later.");
             return;
         }
-        logger(LOG_WARN, "recv() Error: %s", strerror(errno));
+        logger(LOG_ERROR, "recv() Error: %s", strerror(errno));
         clisock->closed = 1;
     }
     else if(n == 0) {
@@ -65,7 +91,7 @@ void handleread(ClientSocket *clisock) {
     }
     else {
         logger(LOG_DEBUG, "Read %d bytes from client(fd: %d)", n, clisock->fd);
-        clisock->curRead += n;
+        clisock->readIndex += n;
     }
 
 }
@@ -78,8 +104,8 @@ void handleread(ClientSocket *clisock) {
 void handlewrite(ClientSocket *clisock) {
     int n;
     n = send(clisock->fd
-             , & clisock->buf[0]
-             , clisock->curRead
+             , clisock->writebuf
+             , clisock->writeIndex
              , 0
             );
 
@@ -88,16 +114,16 @@ void handlewrite(ClientSocket *clisock) {
             logger(LOG_WARN, "send() EINTR. Try again later.");
             return;
         }
-        logger(LOG_WARN, "send() Error: %s", strerror(errno));
+        logger(LOG_ERROR, "send() Error: %s", strerror(errno));
         clisock->closed = 1;
     }
-    else if(n != clisock->curRead) {
+    else if(n != clisock->writeIndex) {
         logger(LOG_WARN, "Can't send whole buffer to client (fd: %d)", clisock->fd);
         clisock->closed = 1;
     }
     else {
         logger(LOG_DEBUG, "Send %d bytes to client(fd: %d)", n, clisock->fd);
-        clisock->curRead = 0;
+        clisock->writeIndex = 0;
     }
 }
 

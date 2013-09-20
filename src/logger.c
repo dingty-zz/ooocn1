@@ -2,6 +2,8 @@
 #include <stdarg.h>
 #include <logger.h>
 
+static FILE *fp;
+
 /*
 @brief
   This log function simulates normal logging system.
@@ -14,7 +16,7 @@ void log_print(int level, char* filename, int line, char *fmt,...)
     char            *p, *r;
     int             e;
 
-    FILE *fp = stdout;
+    fp = stdout;
 
     switch (level) {
     case LOG_DEBUG:

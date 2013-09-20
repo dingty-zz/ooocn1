@@ -2,17 +2,19 @@
 #define _LINKEDLIST_H
 
 typedef struct _ll_Node {
-  struct _ll_Node *next, *prev;
-  void *item;
-}ll_Node;
+    struct _ll_Node *next, *prev;
+    void *item;
+} ll_Node;
 
 typedef struct _Linlist {
-  ll_Node head;
-  int count;
+    ll_Node head;
+    int count;
 } Linlist;
 
 ll_Node* new_ll_Node(void *);
 Linlist* new_Linlist();
+
+void ll_delete_allnodes(Linlist *, void (* del_item)(void *));
 
 int ll_count(Linlist *);
 void ll_insert_last(Linlist *, ll_Node *);

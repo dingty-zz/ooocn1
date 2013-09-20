@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
+#include <errno.h>
 #include <assert.h>
 #include <sys/select.h>
 #include <sys/socket.h>
@@ -51,12 +53,15 @@ void refresh_select(SelectPool *pool) {
                           NULL, NULL);
 
     if(pool->nready < 0) {
-        logger(LOG_ERROR, "select func is wrong");
-        exit(0);
+        if(errno == EINTR) {
+            logger(LOG_INFO, "select func is interrupted by signal");
+        }
+        else {
+            logger(LOG_ERROR, "select func Error: %s", strerror(errno));
+        }
     }
     else if(pool->nready == 0) {
         logger(LOG_WARN, "select returns nothing");
-        return;
     }
 }
 
@@ -77,8 +82,8 @@ void accept_newclient(SelectPool *pool) {
                     accept(pool->listenfd, (struct sockaddr *)&addr, &addr_len))
                 < 0
           ) {
-            logger(LOG_ERROR, "accept fun");
-            exit(0);
+            logger(LOG_ERROR, "Could not accept more clients");
+            return;
         }
 
         if( add_client(pool, connfd) < 0) {

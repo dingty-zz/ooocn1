@@ -24,6 +24,18 @@ Linlist* new_Linlist() {
     return ll;
 }
 
+void ll_delete_allnodes(Linlist *ll, void (*del_item)(void *)){
+    ll_Node *next;
+    ll_Node *head = & ll->head;
+    ll_Node *iter = head->next;
+    while(iter != head) {
+        next = iter->next;
+        del_item(iter->item);
+        free(iter);
+        iter = next;
+    }
+}
+
 int ll_count(Linlist *ll) {
     return ll->count;
 }
@@ -54,7 +66,7 @@ void ll_remove(Linlist *ll, ll_Node *node) {
 }
 
 ll_Node *ll_start(Linlist *ll) {
-    ll_Node* head = &ll->head;
+    ll_Node* head = & ll->head;
     return head->next;
 }
 ll_Node *ll_next(ll_Node *node) {
