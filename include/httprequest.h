@@ -43,5 +43,6 @@ void delete_request(HttpRequest *);
 
 KVPair *makeKVPair(char *, int);
 void delete_KVP(void *item);
+int KVPcompareKey(KVPair *kvp, char *key);
 
 #endif // for #ifndef _HTTPREQUEST_H

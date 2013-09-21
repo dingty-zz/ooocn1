@@ -58,12 +58,8 @@ void process_request( HttpRequest *request, HttpResponse *response,
 
         process_reqline(request, len);
 
-        if( ! verify_method(request) ) {
-            response->httpcode = 405;
-            request->state = REQ_DONE;
-            return;
-        }
-        if( ! verify_uri(request->uri)
+        if( ! verify_method(request)
+                || ! verify_uri(request->uri)
                 || ! verify_httpV(request->httpversion)) {
             response->httpcode = 400;
             request->state = REQ_DONE;

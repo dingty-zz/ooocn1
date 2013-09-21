@@ -30,6 +30,7 @@ ClientSocket *new_ClientSocket(int fd) {
 }
 void DeleteClientSocket(ClientSocket * clisock) {
     delete_request(& clisock->request);
+    delete_response(& clisock->response);
     free(clisock);
 }
 
@@ -125,5 +126,10 @@ void handlewrite(ClientSocket *clisock) {
         logger(LOG_DEBUG, "Send %d bytes to client(fd: %d)", n, clisock->fd);
         clisock->writeIndex = 0;
     }
+
+    if(clisock->response.state == -1){
+        closeSocket(clisock);
+    }
+
 }
 

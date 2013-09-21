@@ -1,1 +1,1 @@
-curl -i -X head localhost:9999
+curl -I localhost:9999

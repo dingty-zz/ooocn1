@@ -22,8 +22,13 @@ void delete_KVP(void *item) {
 
 void delete_request(HttpRequest *request) {
     if(request->store ) free(request->store);
+    if(request->content ) free(request->content);
     ll_delete_allnodes(request->headers, delete_KVP);
     free(request->headers);
+}
+
+int KVPcompareKey(KVPair *kvp, char *key) {
+    return strcasecmp(kvp->key, key);
 }
 
 KVPair *makeKVPair(char *buf, int len) {
