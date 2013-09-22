@@ -34,18 +34,12 @@ void DeleteClientSocket(ClientSocket * clisock) {
     free(clisock);
 }
 
-int isClosed(ClientSocket *clisock) {
-    return clisock->closed;
-}
 int ableToRead(ClientSocket *clisock) {
     return ( clisock->request.state != REQ_DONE
              && clisock->readIndex < CLISOCK_BUFSIZE );
 }
 int ableToWrite(ClientSocket *clisock) {
-    return clisock->writeIndex > 0;
-}
-void closeSocket(ClientSocket *clisock) {
-    clisock->closed = 1;
+    return clisock->request.state == REQ_DONE;
 }
 
 /*
@@ -55,15 +49,19 @@ void closeSocket(ClientSocket *clisock) {
  */
 void handleread(ClientSocket *clisock) {
     int n;
+    int ctLength;
 
     if(clisock->readIndex == CLISOCK_BUFSIZE)
         return;
 
     switch (clisock->request.state) {
     case REQ_CONTENT:
+        ctLength = clisock->request.ctLength;
+        if( ctLength <= clisock->readIndex)
+            return;
         n = recv(clisock->fd,
                  & clisock->readbuf[clisock->readIndex],
-                 CLISOCK_BUFSIZE - clisock->readIndex,
+                 ctLength - clisock->readIndex,
                  0 );
         break;
     case REQ_LINE:
@@ -84,11 +82,11 @@ void handleread(ClientSocket *clisock) {
             return;
         }
         logger(LOG_ERROR, "recv() Error: %s", strerror(errno));
-        clisock->closed = 1;
+        clisock->closed = 2; //close socket
     }
     else if(n == 0) {
         logger(LOG_DEBUG, "Client connection closed (fd: %d)", clisock->fd);
-        clisock->closed = 1;
+        clisock->closed = 2; //close socket
     }
     else {
         logger(LOG_DEBUG, "Read %d bytes from client(fd: %d)", n, clisock->fd);
@@ -104,6 +102,7 @@ void handleread(ClientSocket *clisock) {
  */
 void handlewrite(ClientSocket *clisock) {
     int n;
+
     n = send(clisock->fd
              , clisock->writebuf
              , clisock->writeIndex
@@ -116,19 +115,19 @@ void handlewrite(ClientSocket *clisock) {
             return;
         }
         logger(LOG_ERROR, "send() Error: %s", strerror(errno));
-        clisock->closed = 1;
+        clisock->closed = 2; //close socket
     }
     else if(n != clisock->writeIndex) {
         logger(LOG_WARN, "Can't send whole buffer to client (fd: %d)", clisock->fd);
-        clisock->closed = 1;
+        clisock->closed = 2; //close socket
     }
     else {
-        logger(LOG_DEBUG, "Send %d bytes to client(fd: %d)", n, clisock->fd);
+        logger(LOG_INFO, "Send %d bytes to client(fd: %d)", n, clisock->fd);
         clisock->writeIndex = 0;
     }
 
     if(clisock->response.state == -1){
-        closeSocket(clisock);
+        clisock->closed = 1;
     }
 
 }

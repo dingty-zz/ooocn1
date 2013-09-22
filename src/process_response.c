@@ -67,6 +67,7 @@ void process_response(HttpRequest *request, HttpResponse * response,
             return;
         response->state = 3;
     }
+
     // server
     if(response->state == 3) {
         if( ! addBuffer(buf, lenptr, &response->bufIndex,
@@ -130,6 +131,7 @@ void process_response(HttpRequest *request, HttpResponse * response,
         if(response->state == 12) {
             if( ! addBuffer(buf, lenptr, &response->bufIndex, "\r\n" ))
                 return;
+
             if(request->httpmethod == HEAD) {
                 response->state = -1; // response done
                 return;
@@ -266,13 +268,16 @@ static int readFileContent(char *buf, int *buflen, FILE *fp, int fsize) {
     int needToCopy = fsize - ftell(fp);
     int freeSpace = CLISOCK_BUFSIZE - (*buflen);
     // fit into writeBuffer
+    logger(LOG_DEBUG, "left file bytes: %d, buffer free size: %d", needToCopy, freeSpace);
     if ( needToCopy <= freeSpace ) {
         fread(buf + (*buflen), 1, needToCopy, fp);
         *buflen += needToCopy;
+        logger(LOG_INFO, "Reading %d bytes from file. Done!", needToCopy);
         return 1;
     }
     else {
         fread(buf + (*buflen), 1, freeSpace, fp);
+        logger(LOG_INFO, "Reading %d bytes from file", freeSpace);
         *buflen += freeSpace;
         return 0;
     }

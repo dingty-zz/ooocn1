@@ -24,7 +24,7 @@ void prepare_select(SelectPool *pool) {
     pool->maxfd = pool->listenfd;
 
     FOR_EACH_CLIENT(pool, iter, clisock) {
-        assert(! isClosed(clisock));
+        assert(! clisock->closed );
 
         if ( ableToRead(clisock) ) {
             FD_SET(clisock->fd, & pool->read_set);

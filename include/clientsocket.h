@@ -26,10 +26,8 @@ typedef struct _ClientSocket {
 
 ClientSocket *new_ClientSocket(int );
 void DeleteClientSocket(ClientSocket * clisock);
-int isClosed(ClientSocket *);
 int ableToRead(ClientSocket *);
 int ableToWrite(ClientSocket *);
-void closeSocket(ClientSocket *);
 
 
 void handleread(ClientSocket *);

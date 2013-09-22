@@ -66,11 +66,12 @@ static void net_service(SelectPool *pool) {
             handleread(clisock);
         }
 
-        if ( ! isClosed(clisock) ){
+        if ( ! clisock->closed ){
             http_process(clisock);
         }
 
-        if ( ! isClosed(clisock)
+        logger(LOG_INFO, "Client fd (%d), closed (%d), index (%d)", clisock->fd, clisock->closed, clisock->writeIndex);
+        if ( ! clisock->closed
                 && FD_ISSET(clisock->fd, & pool->write_set)) {
             logger(LOG_DEBUG, "Client %d writing", clisock->fd);
             handlewrite(clisock);

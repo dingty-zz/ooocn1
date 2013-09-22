@@ -7,6 +7,7 @@
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include <selectpool.h>
 #include <logger.h>
@@ -43,7 +44,6 @@ void init_pool(SelectPool *pool, int listenfd) {
   pool: the select pool
 */
 void refresh_select(SelectPool *pool) {
-
     // get the read_set and write_set ready for select
     prepare_select(pool);
 
@@ -61,7 +61,7 @@ void refresh_select(SelectPool *pool) {
         }
     }
     else if(pool->nready == 0) {
-        logger(LOG_WARN, "select returns nothing");
+        logger(LOG_INFO, "select returns nothing");
     }
 }
 
@@ -90,7 +90,8 @@ void accept_newclient(SelectPool *pool) {
             logger(LOG_WARN, "Can't accept client (fd: %d)", connfd);
         }
         else {
-            logger(LOG_INFO, "Accepted new client (fd: %d)", connfd);
+            logger(LOG_INFO, "Accepted new client (fd: %d), ip: %s",
+              connfd, inet_ntoa(addr.sin_addr));
         }
     }
 }
@@ -113,13 +114,26 @@ void removeClosedSocket(SelectPool *pool) {
         next = cur->next;
         {
             clisock = (ClientSocket *) cur->item;
-            if(isClosed(clisock)) {
+            if( clisock->closed == 2) {
+                // remove client
                 ll_remove(pool->clients, cur);
                 free(cur);
                 fd = clisock->fd;
                 DeleteClientSocket(clisock);
                 close(fd);
                 logger(LOG_INFO, "Remove client (fd: %d)", fd);
+            } else if( clisock->closed == 1) {
+                //clear client
+                delete_request(& clisock->request);
+                delete_response(& clisock->response);
+                if ( init_request(& clisock->request) < 0 ) {
+                    free(clisock);
+                } else {
+                    init_response( & clisock->response);
+                    clisock->readIndex = 0;
+                    clisock->closed = 0;
+                }
+
             }
         }
         cur = next;

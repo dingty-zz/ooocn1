@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <malloc.h>
 #include <httprequest.h>
@@ -10,6 +12,8 @@ static void process_reqline(HttpRequest *request, int len);
 static int verify_method(HttpRequest *);
 static int verify_uri(char *);
 static int verify_httpV(char *);
+static int isValidCtLen(char *);
+static int read_contentData(char *, int *, char *, int *, int);
 
 static int checkBuffer(char *buf, int len) {
     if(buf[len-1] == '\n') {
@@ -33,6 +37,7 @@ void process_request( HttpRequest *request, HttpResponse *response,
                       char *buf, int *lenptr) {
     int ret;
     int len = *lenptr;
+    char *ctLengthStr;
 
     if(request->state == REQ_DONE) return;
     if(len == 0) return;
@@ -126,10 +131,30 @@ void process_request( HttpRequest *request, HttpResponse *response,
     case REQ_CONTENT:
         if(! request->content) {
             // find content-length.
+            ctLengthStr = getValueByKey(request->headers, "Content-Length");
             // malloc length
+            if( ! isValidCtLen(ctLengthStr) ) {
+                response->httpcode = 400;
+                request->state = REQ_DONE;
+                return;
+            }
+            request->ctLength = atoi(ctLengthStr);
+            request->content = malloc(request->ctLength);
+            if( ! request->content ) {
+                response->httpcode = 500;
+                request->state = REQ_DONE;
+                return;
+            }
+
             request->ctIndex = 0;
         }
         // move data;
+        if( !read_contentData(buf, lenptr,
+                              request->content, &request->ctIndex, request->ctLength) ) {
+            return; // unfinished
+        }
+        response->httpcode = 200;
+        request->state = REQ_DONE;
 
         break;
     default: // stupid compiler
@@ -176,4 +201,34 @@ static void process_reqline(HttpRequest *request, int len) {
     if(! request->httpversion) return;
     *(request->httpversion) = '\0';
     request->httpversion += 1 + strspn(request->httpversion + 1, " ") ;
+}
+
+static int isValidCtLen(char *str) {
+    int i;
+    int len;
+    if(! str) return 0;
+    len = strlen(str);
+    for (i = 0; i < len; i++) {
+        if(str[i] <'0' || str[i] >'9')
+            return 0;
+    }
+    return 1;
+}
+static int read_contentData(char *buf, int *buflen,
+                            char *content, int *ctIndex, int ctLen) {
+    int hasToCopy = (*buflen);
+    int leftToCopy = ctLen - (*ctIndex);
+
+    if( hasToCopy >= leftToCopy){
+        memcpy(content + (*ctIndex), buf, leftToCopy);
+        *buflen -= leftToCopy;
+        *ctIndex += leftToCopy;
+        return 1;
+    }
+    else{
+        memcpy(content + (*ctIndex), buf, hasToCopy);
+        *buflen -= hasToCopy;
+        *ctIndex += hasToCopy;
+        return 0;
+    }
 }

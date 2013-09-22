@@ -15,7 +15,6 @@
 void http_process(ClientSocket *clisock) {
 
     if(clisock->response.state == -1){
-        closeSocket(clisock);
         return;
     }
 

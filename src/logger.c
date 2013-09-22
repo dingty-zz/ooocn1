@@ -4,6 +4,12 @@
 
 static FILE *fp;
 
+int log_init(char *logfile){
+    fp = fopen(logfile, "w");
+    if(! fp) return -1;
+    return 0;
+}
+
 /*
 @brief
   This log function simulates normal logging system.

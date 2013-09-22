@@ -55,4 +55,18 @@ KVPair *makeKVPair(char *buf, int len) {
     return kvp;
 }
 
+char *KVPgetValue(KVPair *kvp){
+    return kvp->value;
+}
 
+char *getValueByKey(Linlist *headers, char *key){
+    ll_Node *iter;
+    iter = ll_start(headers);
+    while( iter != ll_end(headers)){
+        if( KVPcompareKey(iter->item, key) ){
+            return KVPgetValue(iter->item);
+        }
+        iter = ll_next(iter);
+    }
+    return NULL;
+}

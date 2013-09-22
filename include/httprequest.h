@@ -35,6 +35,7 @@ typedef struct _HttpRequest {
     Linlist *headers;
 
     char *content;
+    int ctLength;
     int ctIndex;
 } HttpRequest;
 
@@ -44,5 +45,8 @@ void delete_request(HttpRequest *);
 KVPair *makeKVPair(char *, int);
 void delete_KVP(void *item);
 int KVPcompareKey(KVPair *kvp, char *key);
+char *KVPgetValue(KVPair *kvp);
+
+char *getValueByKey(Linlist *headers, char *key);
 
 #endif // for #ifndef _HTTPREQUEST_H
