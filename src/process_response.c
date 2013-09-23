@@ -140,11 +140,13 @@ void process_response(HttpRequest *request, HttpResponse * response,
                 response->state = 13;
         }
         if(response->state == 13) {
-            response->isPipelining = 1;
-            request->state = REQ_LINE;
-            // clear request
-            delete_request(request);
-            init_request(request);
+            if(! response->isPipelining){
+                response->isPipelining = 1;
+                request->state = REQ_LINE;
+                // clear request
+                delete_request(request);
+                init_request(request);
+            }
 
             if( ! readFileContent(buf, lenptr, response->fp, response->fsize) )
                 return;
