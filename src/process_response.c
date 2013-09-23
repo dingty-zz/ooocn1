@@ -23,7 +23,7 @@ static int checkHeader(Linlist *headers, char *key);
  */
 void process_response(HttpRequest *request, HttpResponse * response,
                       char *buf, int *lenptr) {
-    if(request->state != REQ_DONE) return;
+    if(request->state != REQ_DONE && ! response->isPipelining) return;
 
     if(! response->preprocessed) {
         preprocess(request, response);
@@ -140,6 +140,12 @@ void process_response(HttpRequest *request, HttpResponse * response,
                 response->state = 13;
         }
         if(response->state == 13) {
+            response->isPipelining = 1;
+            request->state = REQ_LINE;
+            // clear request
+            delete_request(request);
+            init_request(request);
+
             if( ! readFileContent(buf, lenptr, response->fp, response->fsize) )
                 return;
             response->state = -1; // response done

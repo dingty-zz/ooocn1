@@ -18,6 +18,8 @@ typedef struct _HttpResponse {
 
     char *mimetype;
 
+    int isPipelining;
+
 } HttpResponse;
 
 void init_response(HttpResponse *);

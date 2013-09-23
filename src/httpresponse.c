@@ -10,6 +10,7 @@ void init_response(HttpResponse *response) {
     response->lmdate = NULL;
     response->fp = NULL;
     response->ctlen = NULL;
+    response->isPipelining = 0;
 }
 
 void delete_response(HttpResponse *response) {

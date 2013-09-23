@@ -35,7 +35,7 @@ int ableToRead(ClientSocket *clisock) {
              && clisock->readIndex < CLISOCK_BUFSIZE );
 }
 int ableToWrite(ClientSocket *clisock) {
-    return clisock->request.state == REQ_DONE;
+    return clisock->request.state == REQ_DONE || clisock->response.isPipelining;
 }
 
 /*
@@ -46,18 +46,36 @@ int ableToWrite(ClientSocket *clisock) {
 void handleread(ClientSocket *clisock) {
     int n;
     int ctLength;
+    int ctIndex;
+    int readsize;
+    int ctSize;
+    int bufFreeSize;
 
     if(clisock->readIndex == CLISOCK_BUFSIZE)
         return;
 
     switch (clisock->request.state) {
     case REQ_CONTENT:
-        ctLength = clisock->request.ctLength;
-        if( ctLength <= clisock->readIndex)
+        if(!clisock->request.content) // not initialized
             return;
+        ctLength = clisock->request.ctLength;
+        ctIndex = clisock->request.ctIndex;
+        if( ctLength < ctIndex){
+            clisock->closed = 2;
+            logger(LOG_ERROR, "Content-Length is wrong!");
+            return;
+        }
+
+        ctSize = ctLength - ctIndex;
+        bufFreeSize = CLISOCK_BUFSIZE - clisock->readIndex;
+        readsize = (ctSize <= bufFreeSize)? ctSize: bufFreeSize ;
+
+        if(readsize == 0)
+            return;
+
         n = recv(clisock->fd,
                  & clisock->readbuf[clisock->readIndex],
-                 ctLength - clisock->readIndex,
+                 readsize,
                  0 );
         break;
     case REQ_LINE:

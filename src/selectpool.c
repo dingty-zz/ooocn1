@@ -118,12 +118,9 @@ void removeClosedSocket(SelectPool *pool) {
                 close(fd);
                 logger(LOG_INFO, "Remove client (fd: %d)", fd);
             } else if( clisock->closed == 1) {
-                //clear client
-                delete_request(& clisock->request);
+                //clear response
                 delete_response(& clisock->response);
-                init_request(& clisock->request);
                 init_response( & clisock->response);
-                clisock->readIndex = 0;
                 clisock->closed = 0;
 
             }

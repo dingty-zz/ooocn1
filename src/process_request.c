@@ -140,7 +140,7 @@ void process_request( HttpRequest *request, HttpResponse *response,
             }
             request->ctLength = atoi(ctLengthStr);
             request->content = malloc(request->ctLength);
-            if( ! request->content ) {
+            if( request->ctLength < 0 || ! request->content ) {
                 response->httpcode = 500;
                 request->state = REQ_DONE;
                 return;
