@@ -1,3 +1,5 @@
-I've put down my test scripts inside 'test/' directory.
+I've put my test scripts under'test/' directory.
 
-Please refer to each for more testing documentation.
+Besides those, I've tested in real web browser the normal behaviors:
+1. Visit the page
+2. Posting forms

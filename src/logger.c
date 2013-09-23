@@ -6,7 +6,10 @@ static FILE *fp;
 
 int log_init(char *logfile){
     fp = fopen(logfile, "w");
-    if(! fp) return -1;
+    if(! fp){
+      fp = stdout;
+      return -1;
+    }
     return 0;
 }
 
@@ -21,8 +24,6 @@ void log_print(int level, char* filename, int line, char *fmt,...)
     va_list         list;
     char            *p, *r;
     int             e;
-
-    fp = stdout;
 
     switch (level) {
     case LOG_DEBUG:

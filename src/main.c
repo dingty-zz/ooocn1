@@ -24,6 +24,9 @@ int main(int argc, char* argv[])
     int port;
 
     port = atoi(argv[1]);
+    if( log_init(argc < 4? "": argv[3]) < 0 ){
+    }
+
 
     if( start_server(port) < 0 ) {
         logger(LOG_ERROR, "Failed starting server on port (%d)", port);

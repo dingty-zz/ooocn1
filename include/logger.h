@@ -17,6 +17,7 @@
     log_print(level, __FILE__, __LINE__, __VA_ARGS__ ); \
 }
 
+int log_init(char *logfile);
 void log_print(int level, char* filename, int line, char *fmt,...);
 
 #endif // for #ifndef _LOGGER_H

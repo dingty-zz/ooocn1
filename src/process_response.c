@@ -272,12 +272,17 @@ static int addBuffer(char *buf, int *buflen, int *outIndex, char *out) {
     }
 }
 
+// BUG:
+//  There's a bug in this code. When IO error happened reading file from
+//  disk, the data put into the write buffer could be unknown.
+//  Note that this will not crash the web server, but it could be a
+//  vulnerability.
 static int readFileContent(char *buf, int *buflen, FILE *fp, int fsize) {
     int needToCopy = fsize - ftell(fp);
     int freeSpace = CLISOCK_BUFSIZE - (*buflen);
-    // fit into writeBuffer
     logger(LOG_DEBUG, "left file bytes: %d, buffer free size: %d", needToCopy, freeSpace);
     if ( needToCopy <= freeSpace ) {
+        // fit into writeBuffer
         fread(buf + (*buflen), 1, needToCopy, fp);
         *buflen += needToCopy;
         logger(LOG_DEBUG, "Reading %d bytes from file. Done!", needToCopy);
