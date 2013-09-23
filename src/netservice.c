@@ -70,7 +70,6 @@ static void net_service(SelectPool *pool) {
             http_process(clisock);
         }
 
-        logger(LOG_INFO, "Client fd (%d), closed (%d), index (%d)", clisock->fd, clisock->closed, clisock->writeIndex);
         if ( ! clisock->closed
                 && FD_ISSET(clisock->fd, & pool->write_set)) {
             logger(LOG_DEBUG, "Client %d writing", clisock->fd);

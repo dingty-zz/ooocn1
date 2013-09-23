@@ -272,13 +272,13 @@ static int readFileContent(char *buf, int *buflen, FILE *fp, int fsize) {
     if ( needToCopy <= freeSpace ) {
         fread(buf + (*buflen), 1, needToCopy, fp);
         *buflen += needToCopy;
-        logger(LOG_INFO, "Reading %d bytes from file. Done!", needToCopy);
+        logger(LOG_DEBUG, "Reading %d bytes from file. Done!", needToCopy);
         return 1;
     }
     else {
         fread(buf + (*buflen), 1, freeSpace, fp);
-        logger(LOG_INFO, "Reading %d bytes from file", freeSpace);
         *buflen += freeSpace;
+        logger(LOG_DEBUG, "Reading %d bytes from file", freeSpace);
         return 0;
     }
 }

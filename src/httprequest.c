@@ -49,6 +49,10 @@ KVPair *makeKVPair(char *buf, int len) {
 
     kvp->key = kvp->store;
     kvp->value = strchr(kvp->store, ':');
+    if(kvp->value == NULL){
+        free(kvp);
+        return NULL;
+    }
     *(kvp->value) = '\0';
     kvp->value += 1 + strspn(kvp->value + 1, " ");
 
