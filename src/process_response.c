@@ -217,7 +217,7 @@ static void preprocess(HttpRequest *request, HttpResponse *response) {
 
             break;
         case POST:
-            if(! checkHeader(request->headers, "Content-Length") ){
+            if(! checkHeader(&request->headers, "Content-Length") ){
                 response->httpcode = 411;
                 return;
             }

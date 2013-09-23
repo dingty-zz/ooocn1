@@ -121,7 +121,7 @@ void process_request( HttpRequest *request, HttpResponse *response,
             return;
         }
 
-        ll_insert_last(request->headers, node);
+        ll_insert_last(&request->headers, node);
         *lenptr = 0;
 
         logger(LOG_INFO, "REQUEST HEADER (%s: %s)", kvp->key, kvp->value);
@@ -131,7 +131,7 @@ void process_request( HttpRequest *request, HttpResponse *response,
     case REQ_CONTENT:
         if(! request->content) {
             // find content-length.
-            ctLengthStr = getValueByKey(request->headers, "Content-Length");
+            ctLengthStr = getValueByKey(&request->headers, "Content-Length");
             // malloc length
             if( ! isValidCtLen(ctLengthStr) ) {
                 response->httpcode = 400;

@@ -32,14 +32,14 @@ typedef struct _HttpRequest {
     enum HTTPMETHOD httpmethod;
     enum HTTPSTATE state;
 
-    Linlist *headers;
+    Linlist headers;
 
     char *content;
     int ctLength;
     int ctIndex;
 } HttpRequest;
 
-int init_request(HttpRequest *);
+void init_request(HttpRequest *request);
 void delete_request(HttpRequest *);
 
 KVPair *makeKVPair(char *, int);

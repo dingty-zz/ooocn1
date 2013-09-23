@@ -19,11 +19,7 @@ ClientSocket *new_ClientSocket(int fd) {
     clisock->readIndex = 0;
     clisock->closed = 0;
 
-    if ( init_request(& clisock->request) < 0 ) {
-        free(clisock);
-        return NULL;
-    }
-
+    init_request(& clisock->request);
     init_response( & clisock->response);
 
     return clisock;

@@ -15,7 +15,7 @@ typedef struct _SelectPool { /*represents a pool of connected descriptors*/
 
     int maxfd;
 
-    Linlist *clients;
+    Linlist clients;
 
 } SelectPool;
 
@@ -24,8 +24,8 @@ void refresh_select(SelectPool *);
 void accept_newclient(SelectPool *);
 
 #define FOR_EACH_CLIENT(pool, iter, client) \
-    for ( iter = ll_start( pool->clients ), client = (ClientSocket *) iter->item; \
-          iter != ll_end(pool->clients) ; \
+    for ( iter = ll_start( &pool->clients ), client = (ClientSocket *) iter->item; \
+          iter != ll_end(&pool->clients) ; \
           iter = ll_next(iter), client = (ClientSocket *) iter->item \
         )
 

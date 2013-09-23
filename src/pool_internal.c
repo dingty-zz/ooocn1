@@ -55,7 +55,7 @@ int add_client(SelectPool *pool, int connfd) {
     ll_Node *clinode;
     ClientSocket * clisock;
 
-    if( ll_count(pool->clients) == FD_SETSIZE )
+    if( ll_count(&pool->clients) == FD_SETSIZE )
         return -1;
 
     clisock = new_ClientSocket(connfd);
@@ -70,7 +70,7 @@ int add_client(SelectPool *pool, int connfd) {
         return -1;
     }
 
-    ll_insert_last(pool->clients, clinode);
+    ll_insert_last(&pool->clients, clinode);
 
     return 0;
 

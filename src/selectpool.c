@@ -28,12 +28,7 @@
 void init_pool(SelectPool *pool, int listenfd) {
     pool->listenfd = listenfd;
 
-    pool->clients = new_Linlist();
-
-    if( ! pool->clients ) {
-        logger(LOG_ERROR, "ERROR: Can't init select pool");
-        exit(-1);
-    }
+    init_linkedlist(&pool->clients);
 }
 
 
@@ -108,15 +103,15 @@ void removeClosedSocket(SelectPool *pool) {
     ClientSocket *clisock;
     int fd;
 
-    cur = ll_start(pool->clients);
+    cur = ll_start(& pool->clients);
 
-    while ( cur != ll_end(pool->clients) ) {
+    while ( cur != ll_end(& pool->clients) ) {
         next = cur->next;
         {
             clisock = (ClientSocket *) cur->item;
             if( clisock->closed == 2) {
                 // remove client
-                ll_remove(pool->clients, cur);
+                ll_remove(&pool->clients, cur);
                 free(cur);
                 fd = clisock->fd;
                 DeleteClientSocket(clisock);
@@ -126,13 +121,10 @@ void removeClosedSocket(SelectPool *pool) {
                 //clear client
                 delete_request(& clisock->request);
                 delete_response(& clisock->response);
-                if ( init_request(& clisock->request) < 0 ) {
-                    free(clisock);
-                } else {
-                    init_response( & clisock->response);
-                    clisock->readIndex = 0;
-                    clisock->closed = 0;
-                }
+                init_request(& clisock->request);
+                init_response( & clisock->response);
+                clisock->readIndex = 0;
+                clisock->closed = 0;
 
             }
         }

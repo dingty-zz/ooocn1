@@ -11,17 +11,11 @@ ll_Node* new_ll_Node(void *item) {
     return node;
 }
 
-Linlist* new_Linlist() {
-    Linlist *ll = malloc(sizeof(Linlist));
-    if (ll == NULL)
-        return NULL;
-
+void init_linkedlist(Linlist *ll){
     ll_Node *head = &ll->head;
     head->next = head;
     head->prev = head;
     ll->count = 0;
-
-    return ll;
 }
 
 void ll_delete_allnodes(Linlist *ll, void (*del_item)(void *)){

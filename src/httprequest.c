@@ -3,15 +3,11 @@
 #include <httprequest.h>
 #include <string.h>
 
-int init_request(HttpRequest *request) {
-    request->headers = new_Linlist();
-    if( ! request->headers ) {
-        return -1;
-    }
+void init_request(HttpRequest *request) {
+    init_linkedlist(&request->headers);
     request->state = REQ_LINE;
     request->store = NULL;
     request->content = NULL;
-    return 0;
 }
 
 void delete_KVP(void *item) {
@@ -23,8 +19,7 @@ void delete_KVP(void *item) {
 void delete_request(HttpRequest *request) {
     if(request->store ) free(request->store);
     if(request->content ) free(request->content);
-    ll_delete_allnodes(request->headers, delete_KVP);
-    free(request->headers);
+    ll_delete_allnodes(&request->headers, delete_KVP);
 }
 
 int KVPcompareKey(KVPair *kvp, char *key) {

@@ -12,7 +12,7 @@ typedef struct _Linlist {
 } Linlist;
 
 ll_Node* new_ll_Node(void *);
-Linlist* new_Linlist();
+void init_linkedlist(Linlist *);
 
 void ll_delete_allnodes(Linlist *, void (* del_item)(void *));
 
