@@ -5,12 +5,15 @@
 #include <httprequest.h>
 #include <httpresponse.h>
 
-#define CLISOCK_BUFSIZE 8192
+#include <netinet/in.h>
+
+#define CLISOCK_BUFSIZE 16384
 //#define CLISOCK_BUFSIZE 4
 
 typedef struct _ClientSocket {
 
     int fd;
+    struct in_addr ip;
 
     char readbuf[CLISOCK_BUFSIZE];
     char writebuf[CLISOCK_BUFSIZE];
@@ -22,6 +25,12 @@ typedef struct _ClientSocket {
     HttpRequest request;
     HttpResponse response;
 
+    int stdin_pipe[2];
+    int stdout_pipe[2];
+    pid_t child_pid;
+    int cgi_preprocessed;
+
+    char **envp;
 } ClientSocket;
 
 ClientSocket *new_ClientSocket(int );

@@ -22,6 +22,8 @@ ClientSocket *new_ClientSocket(int fd) {
     init_request(& clisock->request);
     init_response( & clisock->response);
 
+    clisock->cgi_preprocessed = 0;
+
     return clisock;
 }
 void DeleteClientSocket(ClientSocket * clisock) {
@@ -116,6 +118,8 @@ void handleread(ClientSocket *clisock) {
  */
 void handlewrite(ClientSocket *clisock) {
     int n;
+
+    if(clisock->writeIndex == 0) return;
 
     n = send(clisock->fd
              , clisock->writebuf

@@ -11,6 +11,16 @@
 #define LISTENQ 10
 
 SelectPool pool;
+char *port_str;
+
+void set_port_str(char *str){port_str = str;}
+char* get_server_port() {return port_str;}
+
+char cgi_filename[] = "./flaskr/flaskr.py";
+
+char* get_cgiProgram(){
+    return cgi_filename;
+}
 
 /*
 @brief
@@ -90,3 +100,5 @@ void net_handle() {
 
     accept_newclient(&pool);
 }
+
+

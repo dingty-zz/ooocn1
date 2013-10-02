@@ -24,6 +24,7 @@ int main(int argc, char* argv[])
     int port;
 
     port = atoi(argv[1]);
+    set_port_str(argv[1]);
     if( log_init(argc < 4? "": argv[3]) < 0 ){
     }
 

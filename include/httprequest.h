@@ -37,6 +37,9 @@ typedef struct _HttpRequest {
     char *content;
     int ctLength;
     int ctIndex;
+
+    int cgi;
+
 } HttpRequest;
 
 void init_request(HttpRequest *request);

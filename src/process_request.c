@@ -71,6 +71,10 @@ void process_request( HttpRequest *request, HttpResponse *response,
             return;
         }
 
+        if(strncmp("/cgi/", request->uri, 5) == 0){
+            request->cgi = 1;
+        }
+
         *lenptr = 0;
         request->state = REQ_HEADER;
 
@@ -132,6 +136,12 @@ void process_request( HttpRequest *request, HttpResponse *response,
         if(! request->content) {
             // find content-length.
             ctLengthStr = getValueByKey(&request->headers, "Content-Length");
+            // For POST, a Content-Length header is not provided in the request
+            if( !ctLengthStr){
+                response->httpcode = 411;
+                request->state = REQ_DONE;
+                return;
+            }
             // malloc length
             if( ! isValidCtLen(ctLengthStr) ) {
                 response->httpcode = 400;

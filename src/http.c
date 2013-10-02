@@ -3,7 +3,7 @@
 #include "http_internal.h"
 #include <httprequest.h>
 #include <httpresponse.h>
-
+#include <cgi.h>
 
 
 /*
@@ -20,6 +20,11 @@ void http_process(ClientSocket *clisock) {
 
     process_request( & clisock->request, & clisock->response,
                      clisock->readbuf, & clisock->readIndex);
+
+    if( is_cgi( &clisock->request, &clisock->response) ){
+        if ( process_cgi(clisock) == 0 )
+            return;
+    }
 
     process_response( & clisock->request, & clisock->response,
                      clisock->writebuf, &clisock->writeIndex);

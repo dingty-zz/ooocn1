@@ -9,6 +9,7 @@
 #include <clientsocket.h>
 #include <logger.h>
 #include <staticfile.h>
+#include "http_internal.h"
 
 static char *WWW_FOLDER = "/var/www";
 
@@ -76,10 +77,12 @@ void process_response(HttpRequest *request, HttpResponse * response,
         response->state = (response->httpcode != 200)? 4: 5 ;
     }
     if(response->state == 4) {
-        if( ! addBuffer(buf, lenptr, &response->bufIndex, "\r\n" ))
+        if( ! addBuffer(buf, lenptr, &response->bufIndex, "Content-Length: 6\r\n\r\nFailed" ))
             return;
+        start_pipelining(request, response);
         response->state = -1; // response done
     }
+
     // connection
     if(response->state == 5) {
         if( ! addBuffer(buf, lenptr, &response->bufIndex,
@@ -133,6 +136,7 @@ void process_response(HttpRequest *request, HttpResponse * response,
                 return;
 
             if(request->httpmethod == HEAD) {
+                start_pipelining(request, response);
                 response->state = -1; // response done
                 return;
             }
@@ -141,11 +145,7 @@ void process_response(HttpRequest *request, HttpResponse * response,
         }
         if(response->state == 13) {
             if(! response->isPipelining){
-                response->isPipelining = 1;
-                request->state = REQ_LINE;
-                // clear request
-                delete_request(request);
-                init_request(request);
+                start_pipelining(request, response);
             }
 
             if( ! readFileContent(buf, lenptr, response->fp, response->fsize) )
@@ -159,6 +159,7 @@ void process_response(HttpRequest *request, HttpResponse * response,
         if(response->state == 6) {
             if( ! addBuffer(buf, lenptr, &response->bufIndex, "\r\n" ))
                 return;
+            start_pipelining(request, response);
             response->state = -1; // response done
         }
 
@@ -167,71 +168,19 @@ void process_response(HttpRequest *request, HttpResponse * response,
 
 }
 
+void start_pipelining(HttpRequest *request, HttpResponse *response) {
+    response->isPipelining = 1;
+    request->state = REQ_LINE;
+    delete_request(request);
+    init_request(request);
+}
+
 static void preprocess(HttpRequest *request, HttpResponse *response) {
     int needOpen = 0;
     char *path;
     struct stat filestat;
 
     response->preprocessed = 1;
-    if(response->httpcode == 200) {
-        switch (request->httpmethod) {
-        case GET:
-            needOpen = 1;
-        case HEAD:
-            path = make_path(WWW_FOLDER, request->uri, NULL);
-            if(stat(path, &filestat) < 0 ) {
-                del_path(path);
-                response->httpcode = 404;
-                return;
-            } else {
-                if(S_ISDIR(filestat.st_mode)) {
-                    del_path(path);
-                    path = make_path(WWW_FOLDER, request->uri, "/index.html");
-                    if(stat(path, &filestat) < 0 ) {
-                        del_path(path);
-                        response->httpcode = 404;
-                        return;
-                    }
-                }
-            }
-            logger(LOG_INFO, "Serving file: %s", path);
-
-            // fsize, lmdate
-            response->fsize = filestat.st_size;
-            response->ctlen = getContentLength(response->fsize);
-            response->lmdate = getHTTPDate(filestat.st_mtime);
-            if(! response->ctlen || ! response->lmdate) {
-                del_path(path);
-                response->httpcode = 500;
-                return;
-            }
-
-            // mime type
-            getMIMEType(path, &response->mimetype);
-            logger(LOG_INFO, "File Stat: size (%s), last-modified (%s)",
-                   response->ctlen, response->lmdate);
-
-            if(needOpen) {
-                // fp
-                response->fp = fopen(path,"r");
-                if( ! response->fp) {
-                    del_path(path);
-                    response->httpcode = 500;
-                    return;
-                }
-            }
-
-            del_path(path);
-
-            break;
-        case POST:
-            if(! checkHeader(&request->headers, "Content-Length") ){
-                response->httpcode = 411;
-                return;
-            }
-            break;
-        }
-    }
 
     // date string
     response->datestr = getHTTPDate(time(NULL));
@@ -239,6 +188,67 @@ static void preprocess(HttpRequest *request, HttpResponse *response) {
         response->httpcode = 500;
         return;
     }
+
+    if(response->httpcode != 200) return;
+
+    switch (request->httpmethod) {
+    case GET:
+        needOpen = 1;
+    case HEAD:
+        path = make_path(WWW_FOLDER, request->uri, NULL);
+        if(stat(path, &filestat) < 0 ) {
+            del_path(path);
+            response->httpcode = 404;
+            return;
+        } else {
+            if(S_ISDIR(filestat.st_mode)) {
+                del_path(path);
+                path = make_path(WWW_FOLDER, request->uri, "/index.html");
+                if(stat(path, &filestat) < 0 ) {
+                    del_path(path);
+                    response->httpcode = 404;
+                    return;
+                }
+            }
+        }
+        logger(LOG_INFO, "Serving file: %s", path);
+
+        // fsize, lmdate
+        response->fsize = filestat.st_size;
+        response->ctlen = getContentLength(response->fsize);
+        response->lmdate = getHTTPDate(filestat.st_mtime);
+        if(! response->ctlen || ! response->lmdate) {
+            del_path(path);
+            response->httpcode = 500;
+            return;
+        }
+
+        // mime type
+        getMIMEType(path, &response->mimetype);
+        logger(LOG_INFO, "File Stat: size (%s), last-modified (%s)",
+               response->ctlen, response->lmdate);
+
+        if(needOpen) {
+            // fp
+            response->fp = fopen(path,"r");
+            if( ! response->fp) {
+                del_path(path);
+                response->httpcode = 500;
+                return;
+            }
+        }
+
+        del_path(path);
+
+        break;
+    case POST:
+        if(! checkHeader(&request->headers, "Content-Length") ){
+            response->httpcode = 411;
+            return;
+        }
+        break;
+    }
+
 }
 
 static int checkHeader(Linlist *headers, char *key) {

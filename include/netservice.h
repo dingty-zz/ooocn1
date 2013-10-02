@@ -13,4 +13,8 @@
 int start_server(int port);
 void net_handle();
 
+void set_port_str(char *str);
+char *get_server_port();
+char* get_cgiProgram();
+
 #endif // for #ifndef _NETSERVICE_H

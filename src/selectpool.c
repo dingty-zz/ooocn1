@@ -39,6 +39,10 @@ void init_pool(SelectPool *pool, int listenfd) {
   pool: the select pool
 */
 void refresh_select(SelectPool *pool) {
+    /*struct timeval tv;*/
+    /*tv.tv_sec = 0;*/
+    /*tv.tv_usec = 1000;*/
+
     // get the read_set and write_set ready for select
     prepare_select(pool);
 
@@ -46,6 +50,7 @@ void refresh_select(SelectPool *pool) {
                           &pool->read_set,
                           &pool->write_set,
                           NULL, NULL);
+                          /*NULL, &tv);*/
 
     if(pool->nready < 0) {
         if(errno == EINTR) {
@@ -56,7 +61,7 @@ void refresh_select(SelectPool *pool) {
         }
     }
     else if(pool->nready == 0) {
-        logger(LOG_INFO, "select returns nothing");
+        logger(LOG_DEBUG, "select returns nothing");
     }
 }
 
@@ -81,7 +86,7 @@ void accept_newclient(SelectPool *pool) {
             return;
         }
 
-        if( add_client(pool, connfd) < 0) {
+        if( add_client(pool, connfd, addr.sin_addr) < 0) {
             logger(LOG_WARN, "Can't accept client (fd: %d)", connfd);
         }
         else {

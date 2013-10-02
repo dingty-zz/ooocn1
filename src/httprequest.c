@@ -8,6 +8,7 @@ void init_request(HttpRequest *request) {
     request->state = REQ_LINE;
     request->store = NULL;
     request->content = NULL;
+    request->cgi = 0;
 }
 
 void delete_KVP(void *item) {

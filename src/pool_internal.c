@@ -1,6 +1,7 @@
 #include <malloc.h>
 #include <assert.h>
 #include <fcntl.h>
+#include <netinet/in.h>
 
 #include <selectpool.h>
 #include <clientsocket.h>
@@ -51,7 +52,7 @@ void prepare_select(SelectPool *pool) {
   0 on success;
   negative number on failure;
  */
-int add_client(SelectPool *pool, int connfd) {
+int add_client(SelectPool *pool, int connfd, struct in_addr ip) {
     ll_Node *clinode;
     ClientSocket * clisock;
 
@@ -71,6 +72,7 @@ int add_client(SelectPool *pool, int connfd) {
     }
 
     ll_insert_last(&pool->clients, clinode);
+    clisock->ip = ip;
 
     return 0;
 

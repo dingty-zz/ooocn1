@@ -22,4 +22,7 @@ lisod
 replay.test
 replay.out
 
+# python virtualenv dir
+venv/
+
 readme.txt

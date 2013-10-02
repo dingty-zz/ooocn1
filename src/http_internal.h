@@ -6,3 +6,5 @@ void process_request(
 
 void process_response(
     HttpRequest *request, HttpResponse *response, char *buf, int *);
+
+void start_pipelining(HttpRequest *request, HttpResponse *);
