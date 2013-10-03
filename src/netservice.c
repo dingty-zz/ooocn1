@@ -23,11 +23,18 @@ char *ssl_port_str;
 char* get_server_port() {return port_str;}
 char* get_ssl_port() {return ssl_port_str;}
 
-char cgi_filename[] = "./flaskr/flaskr.py";
+char *cgi_filename;
 
 char* get_cgiProgram(){
     return cgi_filename;
 }
+
+char *WWW_FOLDER;
+
+char* get_WWW_folder(){
+    return WWW_FOLDER;
+}
+
 
 /*
 @brief
@@ -41,12 +48,15 @@ char* get_cgiProgram(){
   if success, return 0;
   if on Unix error, return -1;
 */
-int start_server(char *port, char *ssl_port, char *pkey, char *crt) {
+int start_server(char *port, char *ssl_port, char *www_folder, char *cgi_name,
+  char *pkey, char *crt) {
     int listenfd;
     struct sockaddr_in serveraddr;
 
     port_str = port;
     ssl_port_str = ssl_port;
+    cgi_filename = cgi_name;
+    WWW_FOLDER = www_folder;
 
 
     /* Create a socket descriptor */

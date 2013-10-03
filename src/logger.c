@@ -7,7 +7,7 @@ static FILE *fp;
 int log_init(char *logfile){
     fp = fopen(logfile, "w");
     if(! fp){
-      fp = stdout;
+      /*fp = stdout; // for debugging*/
       return -1;
     }
     return 0;

@@ -9,9 +9,8 @@
 #include <clientsocket.h>
 #include <logger.h>
 #include <staticfile.h>
+#include <netservice.h>
 #include "http_internal.h"
-
-static char *WWW_FOLDER = "/var/www";
 
 static int addBuffer(char *, int *, int *, char *);
 static int readFileContent(char *, int *, FILE *, int);
@@ -196,7 +195,7 @@ static void preprocess(HttpRequest *request, HttpResponse *response) {
     case GET:
         needOpen = 1;
     case HEAD:
-        path = make_path(WWW_FOLDER, request->uri, NULL);
+        path = make_path(get_WWW_folder(), request->uri, NULL);
         if(stat(path, &filestat) < 0 ) {
             del_path(path);
             response->httpcode = 404;
@@ -204,7 +203,7 @@ static void preprocess(HttpRequest *request, HttpResponse *response) {
         } else {
             if(S_ISDIR(filestat.st_mode)) {
                 del_path(path);
-                path = make_path(WWW_FOLDER, request->uri, "/index.html");
+                path = make_path(get_WWW_folder(), request->uri, "/index.html");
                 if(stat(path, &filestat) < 0 ) {
                     del_path(path);
                     response->httpcode = 404;

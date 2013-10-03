@@ -1,0 +1,102 @@
+8389
+-INFO: [src/main.c][line: 45] Server started listening...
+-INFO: [src/selectpool.c][line: 94] Accepted new client (fd: 6), ip: 127.0.0.1
+-INFO: [src/process_request.c][line: 82] NEW REQUEST LINE: GET / HTTP/1.1
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Host: 127.0.0.1:9999)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Language: en-US,en;q=0.5)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Encoding: gzip, deflate)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Connection: keep-alive)
+-INFO: [src/process_response.c][line: 214] Serving file: /var/www/index.html
+-INFO: [src/process_response.c][line: 229] File Stat: size (802
+), last-modified (Wed, 28 Sep 2011 19:56:11 GMT
+)
+-INFO: [src/process_response.c][line: 56] RESPONSE STATUS LINE: HTTP/1.1 200 OK
+
+-INFO: [src/clientsocket.c][line: 171] Send 987 bytes to client(fd: 6)
+-INFO: [src/selectpool.c][line: 143] Remove client (fd: 6)
+-INFO: [src/selectpool.c][line: 94] Accepted new client (fd: 6), ip: 127.0.0.1
+-INFO: [src/process_request.c][line: 82] NEW REQUEST LINE: GET /style.css HTTP/1.1
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Host: 127.0.0.1:9999)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept: text/css,*/*;q=0.1)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Language: en-US,en;q=0.5)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Encoding: gzip, deflate)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Referer: http://127.0.0.1:9999/)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Connection: keep-alive)
+-INFO: [src/process_response.c][line: 214] Serving file: /var/www/style.css
+-INFO: [src/process_response.c][line: 229] File Stat: size (301
+), last-modified (Fri, 23 Sep 2011 15:27:06 GMT
+)
+-INFO: [src/process_response.c][line: 56] RESPONSE STATUS LINE: HTTP/1.1 200 OK
+
+-INFO: [src/clientsocket.c][line: 171] Send 485 bytes to client(fd: 6)
+-INFO: [src/selectpool.c][line: 143] Remove client (fd: 6)
+-INFO: [src/selectpool.c][line: 94] Accepted new client (fd: 6), ip: 127.0.0.1
+-INFO: [src/process_request.c][line: 82] NEW REQUEST LINE: GET /images/liso_header.png HTTP/1.1
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Host: 127.0.0.1:9999)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept: image/png,image/*;q=0.8,*/*;q=0.5)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Language: en-US,en;q=0.5)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Encoding: gzip, deflate)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Referer: http://127.0.0.1:9999/)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Connection: keep-alive)
+-INFO: [src/process_response.c][line: 214] Serving file: /var/www/images/liso_header.png
+-INFO: [src/process_response.c][line: 229] File Stat: size (17431
+), last-modified (Fri, 23 Sep 2011 15:27:06 GMT
+)
+-INFO: [src/process_response.c][line: 56] RESPONSE STATUS LINE: HTTP/1.1 200 OK
+
+-INFO: [src/clientsocket.c][line: 171] Send 8192 bytes to client(fd: 6)
+-INFO: [src/clientsocket.c][line: 171] Send 8192 bytes to client(fd: 6)
+-INFO: [src/clientsocket.c][line: 171] Send 1234 bytes to client(fd: 6)
+-INFO: [src/selectpool.c][line: 143] Remove client (fd: 6)
+-INFO: [src/selectpool.c][line: 94] Accepted new client (fd: 6), ip: 127.0.0.1
+-INFO: [src/process_request.c][line: 82] NEW REQUEST LINE: GET /cgi/ HTTP/1.1
+-INFO: [src/process_request.c][line: 131] REQ31] REQUEST HEADER (Host: 127.0.0.1:9999)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept: image/png,image/*;q=0.8,*/*;q=0.5)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Language: en-US,en;q=0.5)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Encoding: gzip, deflate)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Connection: keep-alive)
+-INFO: [src/process_response.c][line: 56] RESPONSE STATUS LINE: HTTP/1.1 404 NOT FOUND
+
+-INFO: [src/clientsocket.c][line: 171] Send 106 bytes to client(fd: 6)
+-INFO: [src/process_request.c][line: 82] NEW REQUEST LINE: GET /favicon.ico HTTP/1.1
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Host: 127.0.0.1:9999)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Language: en-US,en;q=0.5)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Encoding: gzip, deflate)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Connection: keep-alive)
+-INFO: [src/process_response.c][line: 56] RESPONSE STATUS LINE: HTTP/1.1 404 NOT FOUND
+
+-INFO: [src/clientsocket.c][line: 171] Send 106 bytes to client(fd: 6)
+-INFO: [src/process_request.c][line: 82] NEW REQUEST LINE: GET /cgi/ HTTP/1.1
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Host: 127.0.0.1:9999)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Language: en-US,en;q=0.5)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Encoding: gzip, deflate)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Connection: keep-alive)
+-INFO: [src/clientsocket.c][line: 171] Send 425 bytes to client(fd: 6)
+-INFO: [src/selectpool.c][line: 94] Accepted new client (fd: 11), ip: 127.0.0.1
+-INFO: [src/process_request.c][line: 82] NEW REQUEST LINE: GET /cgi/ HTTP/1.1
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Host: 127.0.0.1:9999)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Language: en-US,en;q=0.5)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Encoding: gzip, deflate)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Connection: keep-alive)
+-INFO: [src/selectpool.c][line: 94] Accepted new client (fd: 16), ip: 127.0.0.1
+-INFO: [src/selectpool.c][line: 143] Remove client (fd: 16)
+-INFO: [src/selectpool.c][line: 94] Accepted new client (fd: 16), ip: 127.0.0.1
+-INFO: [src/process_request.c][line: 82] NEW REQUEST LINE: GET / HTTP/1.1
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Host: 127.0.0.1:9999)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Language: en-US,en;q=0.5)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Accept-Encoding: gzip, deflate)
+-INFO: [src/process_request.c][line: 131] REQUEST HEADER (Connection: keep-alive)
+-INFO: [src/process_request.c][line: 131] REQUES

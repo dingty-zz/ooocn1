@@ -19,12 +19,12 @@ CFLAGS=-I$(IDIR) -Wall -Werror
 
 
 _HEADERS = netservice.h selectpool.h logger.h clientsocket.h linkedlist.h \
-		   http.h httprequest.h httpresponse.h staticfile.h cgi.h ssl.h
+		   http.h httprequest.h httpresponse.h staticfile.h cgi.h ssl.h daemonize.h
 HEADERS = $(patsubst %,$(IDIR)/%,$(_HEADERS))
 
 _OBJ = main.o netservice.o selectpool.o logger.o clientsocket.o linkedlist.o \
 	   pool_internal.o http.o httprequest.o httpresponse.o \
-	   process_request.o process_response.o staticfile.o cgi.o ssl.o
+	   process_request.o process_response.o staticfile.o cgi.o ssl.o daemonize.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
