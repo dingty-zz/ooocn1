@@ -5,9 +5,10 @@
 #include <httprequest.h>
 #include <httpresponse.h>
 
+#include <openssl/ssl.h>
 #include <netinet/in.h>
 
-#define CLISOCK_BUFSIZE 16384
+#define CLISOCK_BUFSIZE 8192
 //#define CLISOCK_BUFSIZE 4
 
 typedef struct _ClientSocket {
@@ -31,6 +32,10 @@ typedef struct _ClientSocket {
     int cgi_preprocessed;
 
     char **envp;
+
+    int isHTTPS;
+    SSL *ssl;
+
 } ClientSocket;
 
 ClientSocket *new_ClientSocket(int );

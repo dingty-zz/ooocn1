@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <errno.h>
+#include <openssl/ssl.h>
 
 #include <clientsocket.h>
 #include <logger.h>
@@ -23,10 +24,15 @@ ClientSocket *new_ClientSocket(int fd) {
     init_response( & clisock->response);
 
     clisock->cgi_preprocessed = 0;
+    clisock->isHTTPS = 0;
 
     return clisock;
 }
 void DeleteClientSocket(ClientSocket * clisock) {
+    if(clisock->isHTTPS){
+        SSL_shutdown(clisock->ssl);
+        SSL_free(clisock->ssl);
+    }
     delete_request(& clisock->request);
     delete_response(& clisock->response);
     free(clisock);
@@ -75,18 +81,32 @@ void handleread(ClientSocket *clisock) {
         if(readsize == 0)
             return;
 
-        n = recv(clisock->fd,
-                 & clisock->readbuf[clisock->readIndex],
-                 readsize,
-                 0 );
+        if(! clisock->isHTTPS){
+            n = recv(clisock->fd,
+                     & clisock->readbuf[clisock->readIndex],
+                     readsize,
+                     0 );
+        }
+        else{
+            n = SSL_read(clisock->ssl,
+                     & clisock->readbuf[clisock->readIndex],
+                     readsize);
+        }
         break;
     case REQ_LINE:
     case REQ_HEADER:
         // get one byte at a time for easier parsing
-        n = recv(clisock->fd,
-                 & clisock->readbuf[clisock->readIndex],
-                 1,
-                 0 );
+        if(! clisock->isHTTPS){
+            n = recv(clisock->fd,
+                     & clisock->readbuf[clisock->readIndex],
+                     1,
+                     0 );
+        }
+        else{
+            n = SSL_read(clisock->ssl,
+                     & clisock->readbuf[clisock->readIndex],
+                     1);
+        }
         break;
     default:
         return;
@@ -121,11 +141,19 @@ void handlewrite(ClientSocket *clisock) {
 
     if(clisock->writeIndex == 0) return;
 
-    n = send(clisock->fd
-             , clisock->writebuf
-             , clisock->writeIndex
-             , 0
-            );
+    if( ! clisock->isHTTPS){
+        n = send(clisock->fd
+                 , clisock->writebuf
+                 , clisock->writeIndex
+                 , 0
+                );
+    }
+    else{
+        n = SSL_write(clisock->ssl
+                 , clisock->writebuf
+                 , clisock->writeIndex
+                );
+    }
 
     if(n < 0) {
         if (errno == EINTR) {

@@ -10,11 +10,11 @@
 #ifndef _NETSERVICE_H
 #define _NETSERVICE_H
 
-int start_server(int port);
+int start_server(char *, char *, char*, char*);
 void net_handle();
 
-void set_port_str(char *str);
-char *get_server_port();
+char* get_server_port();
+char* get_ssl_port();
 char* get_cgiProgram();
 
 #endif // for #ifndef _NETSERVICE_H

@@ -91,6 +91,7 @@ void process_response(HttpRequest *request, HttpResponse * response,
         response->state = 6;
     }
 
+    logger(LOG_DEBUG, "RESPONSE: processing method specific content");
 
     switch (request->httpmethod) {
     case GET:

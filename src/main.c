@@ -21,20 +21,17 @@
 
 int main(int argc, char* argv[])
 {
-    int port;
+    if(argc < 3) return 0;
 
-    port = atoi(argv[1]);
-    set_port_str(argv[1]);
     if( log_init(argc < 4? "": argv[3]) < 0 ){
     }
 
 
-    if( start_server(port) < 0 ) {
-        logger(LOG_ERROR, "Failed starting server on port (%d)", port);
+    if( start_server(argv[1], argv[2], "ssl/hongchad.key", "ssl/hongchad.crt") < 0 ) {
         exit(0);
     }
 
-    logger(LOG_INFO, "Start listening on port (%d)", port);
+    logger(LOG_INFO, "Server started listening...");
 
     while (1) {
         net_handle();

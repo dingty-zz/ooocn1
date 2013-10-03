@@ -113,7 +113,7 @@ static int prepare_envp(ClientSocket *clisock) {
         return -1;
     }
     if( ( clisock->envp[i++] =
-                newENVPair("SERVER_PORT", "/cgi"))
+                newENVPair("SERVER_PORT", (clisock->isHTTPS)? get_ssl_port(): get_server_port()))
             == NULL) {
         return -1;
     }

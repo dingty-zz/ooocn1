@@ -8,6 +8,7 @@
 typedef struct _SelectPool { /*represents a pool of connected descriptors*/
 
     int listenfd;
+    int ssl_fd;
 
     fd_set read_set;
     fd_set write_set;
@@ -16,6 +17,7 @@ typedef struct _SelectPool { /*represents a pool of connected descriptors*/
     int maxfd;
 
     Linlist clients;
+    SSL_CTX *ssl_context;
 
 } SelectPool;
 

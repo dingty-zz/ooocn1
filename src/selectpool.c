@@ -39,9 +39,9 @@ void init_pool(SelectPool *pool, int listenfd) {
   pool: the select pool
 */
 void refresh_select(SelectPool *pool) {
-    /*struct timeval tv;*/
-    /*tv.tv_sec = 0;*/
-    /*tv.tv_usec = 1000;*/
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 1000;
 
     // get the read_set and write_set ready for select
     prepare_select(pool);
@@ -49,8 +49,8 @@ void refresh_select(SelectPool *pool) {
     pool->nready = select(pool->maxfd + 1,
                           &pool->read_set,
                           &pool->write_set,
-                          NULL, NULL);
-                          /*NULL, &tv);*/
+                          /*NULL, NULL);*/
+                          NULL, &tv);
 
     if(pool->nready < 0) {
         if(errno == EINTR) {
@@ -86,7 +86,26 @@ void accept_newclient(SelectPool *pool) {
             return;
         }
 
-        if( add_client(pool, connfd, addr.sin_addr) < 0) {
+        if( add_client(pool, connfd, addr.sin_addr, 0) < 0) {
+            logger(LOG_WARN, "Can't accept client (fd: %d)", connfd);
+        }
+        else {
+            logger(LOG_INFO, "Accepted new client (fd: %d), ip: %s",
+              connfd, inet_ntoa(addr.sin_addr));
+        }
+    }
+
+    /*If SSL listening descriptor ready, add new client to pool*/
+    if (FD_ISSET(pool->ssl_fd, &pool->read_set)) {
+        if((connfd =
+                    accept(pool->ssl_fd, (struct sockaddr *)&addr, &addr_len))
+                < 0
+          ) {
+            logger(LOG_ERROR, "Could not accept more clients");
+            return;
+        }
+
+        if( add_client(pool, connfd, addr.sin_addr, 1) < 0) {
             logger(LOG_WARN, "Can't accept client (fd: %d)", connfd);
         }
         else {
@@ -127,7 +146,6 @@ void removeClosedSocket(SelectPool *pool) {
                 delete_response(& clisock->response);
                 init_response( & clisock->response);
                 clisock->closed = 0;
-
             }
         }
         cur = next;

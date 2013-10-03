@@ -6,6 +6,7 @@
 #include <selectpool.h>
 #include <clientsocket.h>
 #include <logger.h>
+#include <ssl.h>
 
 /*
 @brief
@@ -20,9 +21,11 @@ void prepare_select(SelectPool *pool) {
 
     FD_ZERO(&pool->read_set);
     FD_ZERO(&pool->write_set);
-    FD_SET(pool->listenfd, &pool->read_set);
 
-    pool->maxfd = pool->listenfd;
+    FD_SET(pool->listenfd, &pool->read_set);
+    FD_SET(pool->ssl_fd, &pool->read_set);
+
+    pool->maxfd = pool->listenfd > pool->ssl_fd ? pool->listenfd: pool->ssl_fd ;
 
     FOR_EACH_CLIENT(pool, iter, clisock) {
         assert(! clisock->closed );
@@ -48,11 +51,12 @@ void prepare_select(SelectPool *pool) {
   This function adds a client into the select pool.
 @param
   connfd: The client's fd
+  ip: The client's remote ip address
 @return
   0 on success;
   negative number on failure;
  */
-int add_client(SelectPool *pool, int connfd, struct in_addr ip) {
+int add_client(SelectPool *pool, int connfd, struct in_addr ip, int isHTTPS) {
     ll_Node *clinode;
     ClientSocket * clisock;
 
@@ -71,9 +75,18 @@ int add_client(SelectPool *pool, int connfd, struct in_addr ip) {
         return -1;
     }
 
-    ll_insert_last(&pool->clients, clinode);
+    if(isHTTPS){
+        if( client_context_init( pool->ssl_context, &clisock->ssl, connfd) < 0 ){
+            free(clisock);
+            free(clinode);
+            return -1;
+        }
+    }
     clisock->ip = ip;
+    clisock->isHTTPS = isHTTPS;
 
+
+    ll_insert_last(&pool->clients, clinode);
     return 0;
 
 }

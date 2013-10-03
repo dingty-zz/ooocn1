@@ -18,11 +18,6 @@ src/obj/
 *.app
 lisod
 
-# Test files
-replay.test
-replay.out
 
 # python virtualenv dir
 venv/
-
-readme.txt
