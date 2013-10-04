@@ -2,12 +2,13 @@
 #include <stdarg.h>
 #include <logger.h>
 
-static FILE *fp;
+FILE *log_fp;
 
 int log_init(char *logfile){
-    fp = fopen(logfile, "w");
-    if(! fp){
-      /*fp = stdout; // for debugging*/
+    log_fp = fopen(logfile, "w");
+    fprintf(log_fp, "Hello\n");
+    if(! log_fp){
+      /*log_fp = stdout; // for debugging*/
       return -1;
     }
     return 0;
@@ -27,29 +28,29 @@ void log_print(int level, char* filename, int line, char *fmt,...)
 
     switch (level) {
     case LOG_DEBUG:
-        fprintf(fp,"-DEBUG: ");
+        fprintf(log_fp,"-DEBUG: ");
         break;
     case LOG_INFO:
-        fprintf(fp,"-INFO: ");
+        fprintf(log_fp,"-INFO: ");
         break;
     case LOG_WARN:
-        fprintf(fp,"-WARN: ");
+        fprintf(log_fp,"-WARN: ");
         break;
     case LOG_ERROR:
-        fprintf(fp,"-ERROR: ");
+        fprintf(log_fp,"-ERROR: ");
         break;
     default:
         break;
     }
 
-    fprintf(fp,"[%s][line: %d] ",filename,line);
+    fprintf(log_fp,"[%s][line: %d] ",filename,line);
     va_start( list, fmt );
 
     for ( p = fmt ; *p ; ++p )
     {
         if ( *p != '%' )//If simple string
         {
-            fputc( *p,fp );
+            fputc( *p,log_fp );
         }
         else
         {
@@ -60,7 +61,7 @@ void log_print(int level, char* filename, int line, char *fmt,...)
             {
                 r = va_arg( list, char * );
 
-                fprintf(fp,"%s", r);
+                fprintf(log_fp,"%s", r);
                 continue;
             }
 
@@ -69,15 +70,15 @@ void log_print(int level, char* filename, int line, char *fmt,...)
             {
                 e = va_arg( list, int );
 
-                fprintf(fp,"%d", e);
+                fprintf(log_fp,"%d", e);
                 continue;
             }
 
             default:
-                fputc( *p, fp );
+                fputc( *p, log_fp );
             }
         }
     }
     va_end( list );
-    fputc( '\n', fp );
+    fputc( '\n', log_fp );
 }
