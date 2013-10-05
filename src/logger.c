@@ -6,7 +6,6 @@ FILE *log_fp;
 
 int log_init(char *logfile){
     log_fp = fopen(logfile, "w");
-    fprintf(log_fp, "Hello\n");
     if(! log_fp){
       /*log_fp = stdout; // for debugging*/
       return -1;

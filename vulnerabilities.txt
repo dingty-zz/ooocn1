@@ -1,1 +1,2 @@
 1. DoS Attack
+2. Path traversal: "../../foo"
