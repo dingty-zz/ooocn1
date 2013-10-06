@@ -1,3 +1,13 @@
+/*
+ *
+@brief
+  interface process_request() implementation and its helper functions.
+
+@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
+
+@bugs No known bugs
+ *
+ */
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>

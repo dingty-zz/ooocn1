@@ -1,3 +1,13 @@
+/*
+ *
+@brief
+  ClientSocket object attribute and interface implementation module.
+
+@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
+
+@bugs No known bugs
+ *
+ */
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>

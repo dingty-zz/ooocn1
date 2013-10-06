@@ -1,3 +1,13 @@
+/*
+ *
+@brief
+  Http request object attribute and interface implementation.
+
+@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
+
+@bugs No known bugs
+ *
+ */
 #include <stdlib.h>
 #include <malloc.h>
 #include <httprequest.h>

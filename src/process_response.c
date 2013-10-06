@@ -1,3 +1,13 @@
+/*
+ *
+@brief
+  interface process_response() implementation and its helper functions.
+
+@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
+
+@bugs No known bugs
+ *
+ */
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>

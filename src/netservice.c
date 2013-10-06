@@ -1,3 +1,19 @@
+/*
+ *
+@brief
+  This module provides two main functionalities:
+
+  1. initiating the server environment, e.g. setting up the HTTP/HTTPS
+    listening sockets, initializing the select pool, etc.
+
+  2. main structural flow of the servicing sockets in one select loop.
+    This includes checking ready conditions and corresponding calling interfaces.
+
+@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
+
+@bugs No known bugs
+ *
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

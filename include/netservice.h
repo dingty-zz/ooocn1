@@ -1,12 +1,3 @@
-/*
- *
-@brief
-
-@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
-
-@bugs No known bugs
- *
- */
 #ifndef _NETSERVICE_H
 #define _NETSERVICE_H
 

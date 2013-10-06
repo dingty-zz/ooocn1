@@ -1,3 +1,13 @@
+/*
+ *
+@brief
+  Doubly linked List data structure implementation for this web server project.
+
+@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
+
+@bugs No known bugs
+ *
+ */
 #include <malloc.h>
 
 #include <linkedlist.h>

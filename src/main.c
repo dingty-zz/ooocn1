@@ -1,9 +1,7 @@
 /*
  *
 @brief
-  This is the main function file of the web server program.
-  It first start the server given the listening port.
-  Then it loops to service different kinds of net connections.
+  This is the entry point file of the web server program.
 
 @author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
 
@@ -25,6 +23,7 @@ int main(int argc, char* argv[])
     if(argc < 9)
         exit(EXIT_FAILURE);
 
+    // we need to daemonize it first before we initialize the logger.
     if( daemonize(argv[4]) != EXIT_SUCCESS){
         printf("Can't daemonize");
         exit(EXIT_FAILURE);
@@ -34,7 +33,6 @@ int main(int argc, char* argv[])
         printf("Can't initialize logger\n");
         exit(EXIT_FAILURE);
     }
-
 
 
     if( start_server(argv[1], argv[2], argv[5], argv[6], argv[7], argv[8]) < 0 ) {

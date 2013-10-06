@@ -1,3 +1,13 @@
+/*
+ *
+@brief
+  Implementation of internal helper function for select pool module.
+
+@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
+
+@bugs No known bugs
+ *
+ */
 #include <malloc.h>
 #include <assert.h>
 #include <fcntl.h>

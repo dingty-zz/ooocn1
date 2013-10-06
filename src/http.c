@@ -1,3 +1,14 @@
+/*
+ *
+@brief
+  This module serves the intermediate process of transforming raw data
+  from TCP stream to recognizable request and then to response lines.
+
+@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
+
+@bugs No known bugs
+ *
+ */
 #include <http.h>
 #include <logger.h>
 #include "http_internal.h"

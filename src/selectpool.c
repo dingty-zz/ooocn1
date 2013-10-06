@@ -1,3 +1,23 @@
+/*
+ *
+@brief
+  This module provides interfaces to manipulate the select pool.
+
+  The select pool is comprised of all existing client sockets opened by
+  this web server.
+
+  It provides interfaces to initialize the select pool, and refresh pool to
+  check those ready for data reading and writing.
+
+  It also provides interfaces to accept/add new client socket, or remove
+  finished ones.
+
+
+@author Hongchao Deng (Timber) <hongchad@andrew.cmu.edu>
+
+@bugs No known bugs
+ *
+ */
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
