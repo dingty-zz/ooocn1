@@ -1,6 +1,27 @@
 Select-based Echo Server
 ======
 
+What's it
+------
+
+This is web-server based on non-blocking IO paradigm. It also supports HTTPS, CGI server-side.
+
+### General Workflow
+
+The general workflow is:
+
+1. The server initializes environment, such as opening up the listen socket, initializing the
+  select pool, etc.
+
+2. The server starts listening in loop.
+  When there are clients trying to get serviced, the server handles as following:
+  * Read the data sent from server;
+  * Parse the read-in data and generate a http request object;
+  * process the request object and virtually output a response object;
+  * output of the response object is run into socket write buffer and sent to
+  * client;
+
+
 Modules
 ------
 
@@ -24,6 +45,20 @@ This server is divided into the following modules:
 
   This bundle of modules process the raw data sent from client
   and generate corresponding response messages which is put into write buffer.
+
+  It's further divided into two objects:
+  - Http request
+  - Http response
+
+- File Operation
+
+  Library functions provided to handle servicing static files
+
+- HTTPS
+  Wrapper around openssl functions to fit into this server code
+
+- CGI
+  Handle CGI request.
 
 Algorithm
 ------
