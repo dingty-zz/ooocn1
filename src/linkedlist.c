@@ -38,6 +38,7 @@ void ll_delete_allnodes(Linlist *ll, void (*del_item)(void *)){
         free(iter);
         iter = next;
     }
+    ll->count = 0;
 }
 
 int ll_count(Linlist *ll) {
